@@ -6,13 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageview1"
+            android:src="@drawable/ic_launcher_foreground"
+            android:layout_gravity="center"
+            android:scaleType="center"
+            android:layout_margin="20dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn1"
+            android:background="#FDD1D1"
+            android:textSize="40dp"
+            android:textColor="#FFFFFF"
+            android:text="수화 영상 → 텍스트"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn2"
+            android:background="#FDD1D1"
+            android:textSize="40dp"
+            android:textColor="#FFFFFF"
+            android:text="음성 → 수화 영상"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
