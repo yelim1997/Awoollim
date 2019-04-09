@@ -11,10 +11,24 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/audiobtn"
+            android:text="음성인식"
+            android:background="#FDD1D1"
+            android:textSize="30dp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="음성인식 화면"/>
+            android:id="@+id/audiotext"
+            android:text=""
+            android:textSize="20dp"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
