@@ -9,37 +9,49 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/imageview1"
-            android:src="@drawable/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:layout_gravity="center"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="30dp"
+            android:background="#FFFFFF"
             android:scaleType="center"
-            android:layout_margin="20dp"/>
+            android:src="@drawable/hand" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/btn1"
-            android:background="#FDD1D1"
-            android:textSize="40dp"
-            android:textColor="#FFFFFF"
-            android:text="수화 영상 → 텍스트"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"/>
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="50dp"
+            android:background="#FFFFFF"
+            android:text="수화 영상 → 텍스트"
+            android:textColor="#000000"
+            android:textSize="25sp" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/btn2"
-            android:background="#FDD1D1"
-            android:textSize="40dp"
-            android:textColor="#FFFFFF"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="50dp"
+            android:background="#FFFFFF"
             android:text="음성 → 수화 영상"
-            android:layout_gravity="center" />
+            android:textColor="#000000"
+            android:textSize="25sp" />
 
     </LinearLayout>
 
