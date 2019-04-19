@@ -46,7 +46,6 @@ public class Main2Activity extends AppCompatActivity {
         // 저장소 확인
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
-            Log.d(TAG, "External Storage Media is not mounted.");
         } else {
             EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
         }
@@ -77,7 +76,6 @@ public class Main2Activity extends AppCompatActivity {
                     recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
 
                     filename = createFilename();
-                    Log.d(TAG, "current filename : " + filename);
                     recorder.setOutputFile(filename);
 
                     recorder.setPreviewDisplay(holder.getSurface());
@@ -85,8 +83,6 @@ public class Main2Activity extends AppCompatActivity {
                     recorder.start();
 
                 } catch (Exception ex) {
-                    Log.e(TAG, "Exception : ", ex);
-
                     recorder.release();
                     recorder = null;
                 }
@@ -115,7 +111,6 @@ public class Main2Activity extends AppCompatActivity {
 
                 Uri videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
                 if (videoUri == null) {
-                    Log.d("SampleVideoRecorder", "Video insert failed.");
                     return;
                 }
 
@@ -175,7 +170,6 @@ public class Main2Activity extends AppCompatActivity {
 
         String newFilename = "";
         if (EXTERNAL_STORAGE_PATH == null || EXTERNAL_STORAGE_PATH.equals("")) {
-
             newFilename = RECORDED_FILE + fileIndex + ".mp4";
         } else {
             newFilename = EXTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + fileIndex + ".mp4";
