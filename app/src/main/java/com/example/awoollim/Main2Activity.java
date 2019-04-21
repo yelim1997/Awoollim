@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,8 +23,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-public class Main2Activity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.List;
 
+public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Callback{
 
     public static final String TAG = "MainActivity";
 
@@ -31,6 +34,7 @@ public class Main2Activity extends AppCompatActivity {
     private static String RECORDED_FILE = "video_recorded";
     private static int fileIndex = 0;
     private static String filename = "";
+
 
     MediaPlayer player;
     MediaRecorder recorder;
@@ -41,25 +45,25 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
 
-        // 저장소 확인
+
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
         } else {
             EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
         }
 
+        setContentView(R.layout.activity_main2);
 
-        SurfaceView surface = new SurfaceView(this);
-        holder = surface.getHolder();
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.videoLayout);
+        camera = Camera.open();
+        camera.setDisplayOrientation(90);
+
+        holder = surfaceView.getHolder();
+        holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        FrameLayout frame = (FrameLayout) findViewById(R.id.videoLayout);
-        frame.addView(surface);
-
-
-        Button recordBtn = (Button) findViewById(R.id.recordBtn);
+        final Button recordBtn = (Button) findViewById(R.id.recordBtn);
         Button recordStopBtn = (Button) findViewById(R.id.recordStopBtn);
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
@@ -72,12 +76,20 @@ public class Main2Activity extends AppCompatActivity {
                     recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                     recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                    recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-                    recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+
+                    recorder.setVideoEncodingBitRate(1000000);
+                    recorder.setVideoFrameRate(30);
+
+                    recorder.setVideoSize(1000000000,1000000000);
+
+                    recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                    recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
                     filename = createFilename();
                     recorder.setOutputFile(filename);
 
+
+                    recorder.setOrientationHint(90);
                     recorder.setPreviewDisplay(holder.getSurface());
                     recorder.prepare();
                     recorder.start();
@@ -122,6 +134,49 @@ public class Main2Activity extends AppCompatActivity {
         checkDangerousPermissions();
     }
 
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        try {
+            if (camera == null) {
+                camera.setPreviewDisplay(holder);
+                camera.startPreview();
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+        if (holder.getSurface() == null) {
+            return;
+        }
+        try {
+            camera.stopPreview();
+        } catch (Exception e) {
+
+        }
+
+        Camera.Parameters parameters = camera.getParameters();
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
+        camera.setParameters(parameters);
+        try {
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (Exception e) {
+        }
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
     private void checkDangerousPermissions() {
         String[] permissions = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -163,6 +218,10 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
 
 
     private String createFilename() {
