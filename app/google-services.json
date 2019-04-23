@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "738240921115",
+    "firebase_url": "https://awoollim-9c359.firebaseio.com",
+    "project_id": "awoollim-9c359",
+    "storage_bucket": "awoollim-9c359.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738240921115:android:7e967140053240e7",
+        "android_client_info": {
+          "package_name": "com.example.awoollim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738240921115-je5hk2ma0g2gn8t03i4bn32lvuh1orit.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRMiRYUxzJ6WYhw3UD1Cv-1V_5DvfJhD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738240921115-je5hk2ma0g2gn8t03i4bn32lvuh1orit.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
