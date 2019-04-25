@@ -3,6 +3,7 @@ package com.example.awoollim;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -46,7 +49,7 @@ public class Main3Activity extends AppCompatActivity {
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
                 i.putExtra(RecognizerIntent.EXTRA_PROMPT,"말해주세요");
 
-                Toast.makeText(Main3Activity.this,"start speak",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(Main3Activity.this,"start speak",Toast.LENGTH_SHORT).show();
 
                 try {
                     startActivityForResult(i,RESULT_SPEECH);
@@ -86,15 +89,16 @@ public class Main3Activity extends AppCompatActivity {
                     text = "엄마";
                 }
 
-                try{
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                     StorageReference spaceRef = storageRef.child("video/"+text+".gif");
                     Glide.with(videoImage).load(spaceRef).into(videoImage);
 
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"일치하는 영상이 없습니다.",Toast.LENGTH_SHORT).show();
-                }
-
+                    spaceRef.getMetadata().addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getBaseContext(),"일치하는 영상이 없습니다.",Toast.LENGTH_SHORT).show();
+                        }
+                    });
             }
         });
 
