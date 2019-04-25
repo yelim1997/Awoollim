@@ -7,8 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -17,18 +22,23 @@ public class Main3Activity extends AppCompatActivity {
     private static final int RESULT_SPEECH = 1; //REQUEST_CODE로 쓰임
 
     private Intent i;
-    private Button button;
+    private Button audiobtn;
     private TextView textView;
+    private Button videoDownBtn;
+    private ImageView videoImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
-        button = (Button)findViewById(R.id.audiobtn);
+        audiobtn = (Button)findViewById(R.id.audiobtn);
+        videoDownBtn = (Button)findViewById(R.id.videoDownBtn);
         textView = (TextView)findViewById(R.id.audiotext);
+        videoImage = (ImageView)findViewById(R.id.videoImage);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        //음성인식 버튼 클릭시
+        audiobtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -47,6 +57,47 @@ public class Main3Activity extends AppCompatActivity {
 
             }
         });
+
+        //영상보기 버튼 클릭시
+        videoDownBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                String text = textView.getText().toString();
+
+                //다의어 부분
+                if(text.equals("경찰")){
+                    text = "경찰관";
+                }
+                if(text.equals("남자친구")){
+                    text = "남자 친구";
+                }
+                if(text.equals("여자친구")){
+                    text = "여자 친구";
+                }
+                if(text.equals("와이프")){
+                    text = "아내";
+                }
+                if(text.equals("아버지")){
+                    text = "아빠";
+                }
+                if(text.equals("어머니")){
+                    text = "엄마";
+                }
+
+                try{
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                    StorageReference spaceRef = storageRef.child("video/"+text+".gif");
+                    Glide.with(videoImage).load(spaceRef).into(videoImage);
+
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(),"일치하는 영상이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
     }
 
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
@@ -61,7 +112,9 @@ public class Main3Activity extends AppCompatActivity {
 
             textView.setText(""+result_sst);
 
-            Toast.makeText(Main3Activity.this,result_sst,Toast.LENGTH_SHORT).show();;
+//            Toast.makeText(Main3Activity.this,result_sst,Toast.LENGTH_SHORT).show();;
         }
     }
+
 }
+
