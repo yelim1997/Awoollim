@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -14,13 +15,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -56,8 +54,7 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
         setContentView(R.layout.activity_main2);
 
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.videoLayout);
-        camera = Camera.open();
-        camera.setDisplayOrientation(90);
+
 
         holder = surfaceView.getHolder();
         holder.addCallback(this);
@@ -73,13 +70,14 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
                         recorder = new MediaRecorder();
                     }
 
+
                     recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                     recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
-                    recorder.setVideoEncodingBitRate(1000000);
+                    CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+                    recorder.setVideoEncodingBitRate(profile.videoBitRate);
                     recorder.setVideoFrameRate(30);
-
                     recorder.setVideoSize(1000000000,1000000000);
 
                     recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
@@ -87,7 +85,6 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
 
                     filename = createFilename();
                     recorder.setOutputFile(filename);
-
 
                     recorder.setOrientationHint(90);
                     recorder.setPreviewDisplay(holder.getSurface());
@@ -115,7 +112,7 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
 
                 values.put(MediaStore.MediaColumns.TITLE, "RecordedVideo");
                 values.put(MediaStore.Audio.Media.ALBUM, "Video Album");
-                values.put(MediaStore.Audio.Media.ARTIST, "Mike");
+                values.put(MediaStore.Audio.Media.ARTIST, "YELIM");
                 values.put(MediaStore.Audio.Media.DISPLAY_NAME, "Recorded Video");
                 values.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000);
                 values.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
@@ -135,6 +132,8 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
+        camera = Camera.open();
+        camera.setDisplayOrientation(90);
 
         try {
             if (camera == null) {
