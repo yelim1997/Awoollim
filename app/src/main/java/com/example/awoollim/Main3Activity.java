@@ -2,10 +2,13 @@ package com.example.awoollim;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,25 +72,33 @@ public class Main3Activity extends AppCompatActivity {
 
                 String text = textView.getText().toString();
 
-                //다의어 부분
-                if(text.equals("경찰")){
-                    text = "경찰관";
-                }
-                if(text.equals("남자친구")){
-                    text = "남자 친구";
-                }
-                if(text.equals("여자친구")){
-                    text = "여자 친구";
-                }
-                if(text.equals("와이프")){
-                    text = "아내";
-                }
-                if(text.equals("아버지")){
-                    text = "아빠";
-                }
-                if(text.equals("어머니")){
-                    text = "엄마";
-                }
+                //음성인식 버튼 수행 후 실시
+                if(text.equals("이곳에 텍스트가 나옵니다.")){
+                    Toast.makeText(getBaseContext(),"음성인식을 먼저 실행해주세요",Toast.LENGTH_SHORT).show();
+                    Log.d("TAG",text);
+                }else {
+
+                    Log.d("TAG",text);
+
+                    //다의어 부분
+                    if(text.equals("경찰")){
+                        text = "경찰관";
+                    }
+                    if(text.equals("남자친구")){
+                        text = "남자 친구";
+                    }
+                    if(text.equals("여자친구")){
+                        text = "여자 친구";
+                    }
+                    if(text.equals("와이프")){
+                        text = "아내";
+                    }
+                    if(text.equals("아버지")){
+                        text = "아빠";
+                    }
+                    if(text.equals("어머니")){
+                        text = "엄마";
+                    }
 
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                     StorageReference spaceRef = storageRef.child("video/"+text+".gif");
@@ -99,6 +110,8 @@ public class Main3Activity extends AppCompatActivity {
                             Toast.makeText(getBaseContext(),"일치하는 영상이 없습니다.",Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+
             }
         });
 
