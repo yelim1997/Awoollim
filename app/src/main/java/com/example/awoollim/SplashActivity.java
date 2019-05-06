@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 
+/*
+    로딩화면
+ */
+
 public class SplashActivity extends Activity {
 
     @Override

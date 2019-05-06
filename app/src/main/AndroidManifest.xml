@@ -18,9 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Main4Activity"></activity>
-        <activity android:name=".Main3Activity" />
-        <activity android:name=".Main2Activity" />
+        <activity android:name=".Explanation"></activity>
+        <activity android:name=".Voice" />
+        <activity android:name=".SignLanguage" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".SplashActivity"

@@ -23,7 +23,11 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 
-public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Callback{
+/*
+     수화해석 화면 (수화 영상을 녹화해 텍스트로 번역)
+ */
+
+public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Callback{
 
     private static String EXTERNAL_STORAGE_PATH = "";
     private static String RECORDED_FILE = "video_recorded";
@@ -49,7 +53,7 @@ public class Main2Activity extends AppCompatActivity implements SurfaceHolder.Ca
             EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
 
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.signlanguage);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.videoLayout);
 
         holder = surfaceView.getHolder();

@@ -2,13 +2,10 @@ package com.example.awoollim;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,12 +15,15 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class Main3Activity extends AppCompatActivity {
+/*
+    음성해석 화면 (음성인식을 통해 수화영상과 텍스트 제공)
+ */
+
+public class Voice extends AppCompatActivity {
 
     private static final int RESULT_SPEECH = 1; //REQUEST_CODE로 쓰임
 
@@ -36,7 +36,7 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.voice);
 
         audiobtn = (Button)findViewById(R.id.audiobtn);
         videoDownBtn = (Button)findViewById(R.id.videoDownBtn);
@@ -52,7 +52,7 @@ public class Main3Activity extends AppCompatActivity {
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
                 i.putExtra(RecognizerIntent.EXTRA_PROMPT,"말해주세요");
 
-//                Toast.makeText(Main3Activity.this,"start speak",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(Voice.this,"start speak",Toast.LENGTH_SHORT).show();
 
                 try {
                     startActivityForResult(i,RESULT_SPEECH);
@@ -75,10 +75,8 @@ public class Main3Activity extends AppCompatActivity {
                 //음성인식 버튼 수행 후 실시
                 if(text.equals("이곳에 텍스트가 나옵니다.")){
                     Toast.makeText(getBaseContext(),"음성인식을 먼저 실행해주세요",Toast.LENGTH_SHORT).show();
-                    Log.d("TAG",text);
-                }else {
 
-                    Log.d("TAG",text);
+                }else {
 
                     //다의어 부분
                     if(text.equals("경찰")){
@@ -129,7 +127,7 @@ public class Main3Activity extends AppCompatActivity {
 
             textView.setText(""+result_sst);
 
-//            Toast.makeText(Main3Activity.this,result_sst,Toast.LENGTH_SHORT).show();;
+//            Toast.makeText(Voice.this,result_sst,Toast.LENGTH_SHORT).show();;
         }
     }
 
