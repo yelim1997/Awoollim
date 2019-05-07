@@ -19,7 +19,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -32,7 +35,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     private static String EXTERNAL_STORAGE_PATH = "";
     private static String RECORDED_FILE = "video_recorded";
     private static String filename = "";
-    private static int fileIndex = 0;
     private Camera camera = null;
 
     MediaPlayer player;
@@ -61,7 +63,9 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         final Button recordBtn = (Button) findViewById(R.id.recordBtn);
-        Button recordStopBtn = (Button) findViewById(R.id.recordStopBtn);
+        final Button recordStopBtn = (Button) findViewById(R.id.recordStopBtn);
+        final Button recordSend = (Button) findViewById(R.id.recordSend);
+        final TextView recordText = (TextView) findViewById(R.id.recordText);
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -81,7 +85,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                     CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
                     recorder.setVideoEncodingBitRate(profile.videoBitRate);
                     recorder.setVideoFrameRate(30);
-                    recorder.setVideoSize(1000000000,1000000000);
+                    recorder.setVideoSize(640,480);
                     recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                     recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
                     recorder.setOrientationHint(90);
@@ -127,6 +131,20 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 }
 
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, videoUri));
+            }
+        });
+
+        recordSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(filename == "")
+                {
+                    Toast.makeText(getBaseContext(),"촬영된 수화영상이 없습니다.", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    recordText.setText(filename);
+                }
             }
         });
         checkDangerousPermissions();
@@ -244,16 +262,15 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
 
     private String createFilename()
     {
-        fileIndex++;
 
         String newFilename = "";
         if (EXTERNAL_STORAGE_PATH == null || EXTERNAL_STORAGE_PATH.equals(""))
         {
-            newFilename = RECORDED_FILE + fileIndex + ".mp4";
+            newFilename = RECORDED_FILE + ".mp4";
         }
         else
             {
-            newFilename = EXTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + fileIndex + ".mp4";
+            newFilename = EXTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + ".mp4";
             }
 
         return newFilename;
@@ -278,6 +295,17 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         {
             player.release();
             player = null;
+        }
+
+
+        if(filename != "")
+        {
+            File file = new File(filename);
+            if (file.exists()) {
+                file.delete();
+            }
+            filename = "";
+
         }
 
         super.onPause();
