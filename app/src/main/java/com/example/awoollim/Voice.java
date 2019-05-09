@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +15,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -38,6 +41,10 @@ public class Voice extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.voice);
 
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.title_bar);
+
         audiobtn = (Button)findViewById(R.id.audiobtn);
         videoDownBtn = (Button)findViewById(R.id.videoDownBtn);
         textView = (TextView)findViewById(R.id.audiotext);
@@ -47,6 +54,9 @@ public class Voice extends AppCompatActivity {
         audiobtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoImage.setBackgroundResource(R.color.colorImage);
+                Glide.with(videoImage).load("").into(videoImage);
+
                 i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 i.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getBaseContext().getPackageName());
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
@@ -100,11 +110,16 @@ public class Voice extends AppCompatActivity {
 
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                     StorageReference spaceRef = storageRef.child("video/"+text+".gif");
+
+                    videoImage.setBackgroundResource(R.color.colorAccent);
+
                     Glide.with(videoImage).load(spaceRef).into(videoImage);
+                    
 
                     spaceRef.getMetadata().addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            videoImage.setBackgroundResource(R.color.colorImage);
                             Toast.makeText(getBaseContext(),"일치하는 영상이 없습니다.",Toast.LENGTH_SHORT).show();
                         }
                     });

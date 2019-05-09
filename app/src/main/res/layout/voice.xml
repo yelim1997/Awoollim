@@ -18,7 +18,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="vertical"
-        android:background="#ffffff">
+        android:background="@color/colorAccent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,25 +26,25 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <ImageView
+                android:id="@+id/videoImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/videoImage"
-                android:background="#CFCFCF"
                 android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/colorImage"
                 android:visibility="visible"
                 tools:visibility="visible"/>
 
             <TextView
+                android:id="@+id/audiotext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/audiotext"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:text="이곳에 텍스트가 나옵니다."
                 android:textSize="15sp"
                 android:textColor="@color/colorPrimary"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:layout_weight="1"/>
+                android:gravity="center"/>
         </LinearLayout>
 
         <LinearLayout
@@ -53,25 +53,25 @@
             android:layout_weight="9"
             android:orientation="horizontal">
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:id="@+id/audiobtn"
-                android:text="음성인식"
-                android:background="#00FFFFFF"
-                android:textSize="25sp"
-                android:textColor="@color/colorPrimary"
-                android:layout_gravity="center"/>
-            <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:id="@+id/videoDownBtn"
-                android:text="영상보기"
-                android:background="#00FFFFFF"
+                android:text="음성인식"
                 android:textSize="25sp"
                 android:textColor="@color/colorPrimary"
+                android:background="#00FFFFFF"/>
+            <Button
+                android:id="@+id/videoDownBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="영상보기"
+                android:textSize="25sp"
+                android:textColor="@color/colorPrimary"
+                android:background="#00FFFFFF"
                 android:enabled="true"/>
         </LinearLayout>
 
