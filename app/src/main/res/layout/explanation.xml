@@ -8,18 +8,12 @@
     android:background="#ffffff"
     tools:context=".Explanation">
 
-    <me.relex.circleindicator.CircleIndicator
-        android:id="@+id/indicator"
-        app:ci_drawable="@drawable/black_radius"
-        app:ci_height="7dp"
-        app:ci_width="7dp"
-        app:ci_margin="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vpPager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <view
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="android.support.v4.view.ViewPager"
+        android:id="@+id/view"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 
 </LinearLayout>
