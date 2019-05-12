@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class Adapter extends PagerAdapter{
 
-    private int[] images = {R.drawable.ex1, R.drawable.ex2};
+    private int[] images = {R.drawable.ex1, R.drawable.ex2, R.drawable.ex3, R.drawable.ex4, R.drawable.ex5};
     private LayoutInflater inflater;
     private Context context;
 
@@ -33,12 +33,9 @@ public class Adapter extends PagerAdapter{
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.slider,container,false);
         ImageView imageView = (ImageView)v.findViewById(R.id.fragImageView);
-        TextView textView = (TextView)v.findViewById(R.id.fragTextView);
 
         imageView.setImageResource(images[position]);
 
-        String text = (position+1)+"번째 이미지";
-        textView.setText(text);
         container.addView(v);
         return v;
     }

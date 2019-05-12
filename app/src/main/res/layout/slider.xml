@@ -9,15 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorAccent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/fragTextView"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="30sp"
-        android:layout_marginTop="30dp"/>
 
     <ImageView
         android:layout_width="match_parent"
