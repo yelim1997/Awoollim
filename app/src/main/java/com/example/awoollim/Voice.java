@@ -67,8 +67,6 @@ public class Voice extends AppCompatActivity {
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
                 i.putExtra(RecognizerIntent.EXTRA_PROMPT, "말해주세요");
 
-//              Toast.makeText(Voice.this,"start speak",Toast.LENGTH_SHORT).show();
-
                 try {
                     startActivityForResult(i, RESULT_SPEECH);
                 } catch (ActivityNotFoundException e) {
@@ -217,7 +215,6 @@ public class Voice extends AppCompatActivity {
 
             textView.setText("" + result_sst);
 
-//            Toast.makeText(Voice.this,result_sst,Toast.LENGTH_SHORT).show();;
         }
     }
 }
