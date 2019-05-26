@@ -1,7 +1,9 @@
 package com.example.awoollim;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -41,6 +43,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     MediaPlayer player;
     MediaRecorder recorder;
     SurfaceHolder holder;
+    Uri videoUri;
 
 
     @Override
@@ -129,7 +132,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 values.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
                 values.put(MediaStore.Audio.Media.DATA, filename);
 
-                Uri videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+                videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
                 if (videoUri == null)
                 {
                     return;
@@ -206,8 +209,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
 
-
-
     private String createFilename()
     {
 
@@ -222,6 +223,16 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
             }
 
         return newFilename;
+    }
+
+    private void deleteVideo( ) {
+        File file = new File(filename);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        getContentResolver().delete( videoUri,
+                MediaStore.MediaColumns.DATA + "=?", new String[]{ filename} );
     }
 
 
@@ -248,10 +259,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
 
         if(filename != "")
         {
-            File file = new File(filename);
-            if (file.exists()) {
-                file.delete();
-            }
+            deleteVideo();
             filename = "";
 
         }
