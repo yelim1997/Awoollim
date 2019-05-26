@@ -5,6 +5,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.pm10.library.CircleIndicator;
+
 public class Explanation extends AppCompatActivity{
 
     Adapter adapter;
@@ -20,5 +22,8 @@ public class Explanation extends AppCompatActivity{
         viewPager = (ViewPager)findViewById(R.id.view);
         adapter = new Adapter(this);
         viewPager.setAdapter(adapter);
+
+        CircleIndicator circleIndicator = (CircleIndicator)findViewById(R.id.circle_indicator);
+        circleIndicator.setupWithViewPager(viewPager);
     }
 }
