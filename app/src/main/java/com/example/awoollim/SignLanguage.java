@@ -11,6 +11,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -25,8 +26,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /*
@@ -39,6 +50,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     private static String RECORDED_FILE = "video_recorded";
     private static String filename = "";
     private Camera camera = null;
+    TextView recordText;
 
     MediaPlayer player;
     MediaRecorder recorder;
@@ -73,7 +85,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         final Button recordBtn = (Button) findViewById(R.id.recordBtn);
         final Button recordStopBtn = (Button) findViewById(R.id.recordStopBtn);
         final Button recordSend = (Button) findViewById(R.id.recordSend);
-        final TextView recordText = (TextView) findViewById(R.id.recordText);
+        recordText = (TextView) findViewById(R.id.recordText);
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -151,7 +163,9 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 }
                 else
                 {
-                    recordText.setText(filename);
+                    Toast.makeText(getApplicationContext(), "잠시만 기다려주십시오, 처리중입니다...", Toast.LENGTH_LONG).show();
+                    new JSONTask().execute("http://malgeul.ga/");
+
                 }
             }
         });
@@ -265,5 +279,84 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         }
 
         super.onPause();
+    }
+
+    public class JSONTask extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.accumulate("result", "androidTest");
+
+                HttpURLConnection con = null;
+                BufferedReader reader = null;
+
+                try{
+                    URL url = new URL(strings[0]);
+
+                    con = (HttpURLConnection)url.openConnection();
+                    con.connect();
+
+                    InputStream stream = con.getInputStream();
+
+                    reader = new BufferedReader(new InputStreamReader(stream));
+
+                    StringBuffer buffer = new StringBuffer();
+
+                    String line = "";
+
+                    while((line = reader.readLine()) != null){
+                        buffer.append(line);
+                    }
+
+                    return buffer.toString();
+                }catch (MalformedURLException e){
+                    e.printStackTrace();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }finally {
+                    if(con != null){
+                        con.disconnect();
+                    }
+                    try{
+                        if(reader != null){
+                            reader.close();
+                        }
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            StringBuffer sb = new StringBuffer();
+            try {
+                JSONArray jsonArray = new JSONArray(s);
+                for(int i = 0 ; i < jsonArray.length() ; i++){
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String result = jsonObject.getString("result");
+
+                    sb.append(result);
+                }
+
+                if(sb.toString().indexOf("park")!= -1){
+                    recordText.setText("공원");
+                }else if(sb.toString().indexOf("preschcool") != -1) {
+                    recordText.setText("유치원");
+                }else if(sb.toString().indexOf("policeman") != -1){
+                    recordText.setText("경찰관");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
