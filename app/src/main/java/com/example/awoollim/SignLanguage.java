@@ -23,6 +23,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ import java.util.List;
 
 public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Callback{
 
-    private static String EXTERNAL_STORAGE_PATH = "";
+    private static String INTERNAL_STORAGE_PATH = "";
     private static String RECORDED_FILE = "video_recorded";
     private static String filename = "";
     private Camera camera = null;
@@ -57,6 +58,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     SurfaceHolder holder;
     Uri videoUri;
 
+    File file = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -67,13 +69,13 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.title_bar);
 
-        String state = Environment.getExternalStorageState();
 
-        if (!state.equals(Environment.MEDIA_MOUNTED)) { }
-        else
-            {
-            EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
-            }
+        Context context = getApplicationContext();
+
+        //INTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+        INTERNAL_STORAGE_PATH =  Environment.getDataDirectory().getAbsolutePath()+File.separator+"data"+File.separator+context.getPackageName();
+
+        Toast.makeText(getApplicationContext(), INTERNAL_STORAGE_PATH, Toast.LENGTH_LONG).show();
 
         setContentView(R.layout.signlanguage);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.videoLayout);
@@ -144,7 +146,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 values.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
                 values.put(MediaStore.Audio.Media.DATA, filename);
 
-                videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+                videoUri = getContentResolver().insert(MediaStore.Video.Media.INTERNAL_CONTENT_URI, values);
                 if (videoUri == null)
                 {
                     return;
@@ -227,13 +229,13 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
     {
 
         String newFilename = "";
-        if (EXTERNAL_STORAGE_PATH == null || EXTERNAL_STORAGE_PATH.equals(""))
+        if (INTERNAL_STORAGE_PATH == null || INTERNAL_STORAGE_PATH.equals(""))
         {
             newFilename = RECORDED_FILE + ".mp4";
         }
         else
             {
-            newFilename = EXTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + ".mp4";
+            newFilename = INTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + ".mp4";
             }
 
         return newFilename;
@@ -246,7 +248,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         }
 
         getContentResolver().delete( videoUri,
-                MediaStore.MediaColumns.DATA + "=?", new String[]{ filename} );
+                MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
     }
 
 
