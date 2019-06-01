@@ -1,11 +1,8 @@
 package com.example.awoollim;
 
-import android.Manifest;
-import android.content.ContentResolver;
+
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
@@ -14,8 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +18,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +41,7 @@ import java.util.List;
 
 public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Callback{
 
-    private static String INTERNAL_STORAGE_PATH = "";
+    private static String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()+File.separator+"Camera";;
     private static String RECORDED_FILE = "video_recorded";
     private static String filename = "";
     private Camera camera = null;
@@ -68,14 +62,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.title_bar);
-
-
-        Context context = getApplicationContext();
-
-        //INTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
-        INTERNAL_STORAGE_PATH =  Environment.getDataDirectory().getAbsolutePath()+File.separator+"data"+File.separator+context.getPackageName();
-
-        Toast.makeText(getApplicationContext(), INTERNAL_STORAGE_PATH, Toast.LENGTH_LONG).show();
 
         setContentView(R.layout.signlanguage);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.videoLayout);
@@ -146,7 +132,7 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 values.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
                 values.put(MediaStore.Audio.Media.DATA, filename);
 
-                videoUri = getContentResolver().insert(MediaStore.Video.Media.INTERNAL_CONTENT_URI, values);
+                videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
                 if (videoUri == null)
                 {
                     return;
@@ -247,7 +233,12 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
             file.delete();
         }
 
-        getContentResolver().delete( videoUri,
+        if (videoUri == null)
+        {
+            Toast.makeText(getApplicationContext(), "영상 URI가 없습니다.", Toast.LENGTH_LONG).show();
+        }
+        else
+            getContentResolver().delete( videoUri,
                 MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
     }
 
