@@ -3,6 +3,7 @@ package com.example.awoollim;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
@@ -10,10 +11,12 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -25,11 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,7 +38,7 @@ import java.util.List;
      수화해석 화면 (수화 영상을 녹화해 텍스트로 번역)
  */
 
-public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Callback{
+public class SignLanguage extends AppCompatActivity  implements SurfaceHolder.Callback {
 
     private static String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()+File.separator+"Camera";;
     private static String RECORDED_FILE = "video_recorded";
@@ -83,13 +82,12 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                     file.delete();
                 }
 
-                if (videoUri == null)
-                {
+                if (videoUri == null) {
                     Toast.makeText(getApplicationContext(), "첫 촬영 시작", Toast.LENGTH_LONG).show();
                 }
-                else
-                    getContentResolver().delete( videoUri,
-                            MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
+                else {
+                    getContentResolver().delete(videoUri, MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
+                }
 
                 try {
                     if (recorder == null)
@@ -128,15 +126,17 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
 
         recordStopBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (recorder == null)
+                if (recorder == null) {
+                    Toast.makeText(getBaseContext(), "redorder == null", Toast.LENGTH_LONG).show();
                     return;
+                }
 
                 recorder.stop();
                 recorder.reset();
                 recorder.release();
                 recorder = null;
 
-                ContentValues values = new ContentValues(10);
+                ContentValues values = new ContentValues(7);
 
                 values.put(MediaStore.MediaColumns.TITLE, "RecordedVideo");
                 values.put(MediaStore.Audio.Media.ALBUM, "Video Album");
@@ -149,10 +149,18 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
                 videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
                 if (videoUri == null)
                 {
+                    Toast.makeText(getBaseContext(), "videoUri == null", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, videoUri));
+
+                // uri는 임시경로(?)를 가지고 있는데(실제로 존재 X), 이걸 절대 경로로 바꿔주는 부분임
+                ///Cursor cursor = getContentResolver().query(videoUri, null, null, null);
+                //((Cursor) cursor).moveToNext();
+                //String filePath = cursor.getString(cursor.getColumnIndex("_data"));
+
+                uploadVideo();
             }
         });
 
@@ -173,7 +181,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         });
     }
 
-
     public void surfaceCreated(SurfaceHolder holder)
     {
         camera = Camera.open();
@@ -187,7 +194,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
             }
         } catch (IOException e) { }
     }
-
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
@@ -213,7 +219,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         } catch (Exception e) { }
     }
 
-
     public void surfaceDestroyed(SurfaceHolder holder)
     {
         if (camera != null)
@@ -224,7 +229,6 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         }
     }
 
-
     private String createFilename()
     {
 
@@ -234,11 +238,88 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
             newFilename = RECORDED_FILE + ".mp4";
         }
         else
-            {
+        {
             newFilename = INTERNAL_STORAGE_PATH + "/" + RECORDED_FILE + ".mp4";
-            }
+        }
 
         return newFilename;
+    }
+
+    public void uploadVideo () {
+        Toast.makeText(getApplicationContext(), "촬영된 영상을 전송중입니다.", Toast.LENGTH_LONG).show();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run(){
+                try
+                {
+                    String filePath = "/storage/emulated/0/DCIM/Camera/video_recorded.mp4";
+                    FileInputStream mFileInputStream = new FileInputStream(filePath);
+                    URL connectUrl = new URL("http://192.168.219.169:3000/api/photo");
+                    String lineEnd = "\r\n";
+                    String twoHyphens = "--";
+                    String boundary = "*****";
+
+                    HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
+                    conn.setDoInput(true);//입력할수 있도록
+                    conn.setDoOutput(true); //출력할수 있도록
+                    conn.setUseCaches(false);  //캐쉬 사용하지 않음
+                    //post 전송
+                    conn.setRequestMethod("POST");
+                    //파일 업로드 할수 있도록 설정하기.
+                    conn.setRequestProperty("Connection", "Keep-Alive");
+                    conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+                    //DataOutputStream 객체 생성하기.
+                    DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                    //전송할 데이터의 시작임을 알린다.
+                    dos.writeBytes(twoHyphens + boundary + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"upfile\";filename=\"" + filePath +"\"" + lineEnd);
+                    dos.writeBytes(lineEnd);
+                    //한번에 읽어들일수있는 스트림의 크기를 얻어온다.
+                    int bytesAvailable = mFileInputStream.available();
+                    //byte단위로 읽어오기 위하여 byte 배열 객체를 준비한다.
+                    byte[] buffer = new byte[bytesAvailable];
+                    int bytesRead = 0;
+                    // read image
+                    while (bytesRead!=-1) {
+                        //파일에서 바이트단위로 읽어온다.
+                        bytesRead = mFileInputStream.read(buffer);
+                        if(bytesRead==-1)break; //더이상 읽을 데이터가 없다면 빠저나온다.
+                        Log.e("Test", "image byte is " + bytesRead);
+                        //읽은만큼 출력한다.
+                        dos.write(buffer, 0, bytesRead);
+                        //출력한 데이터 밀어내기
+                        dos.flush();
+                    }
+                    //전송할 데이터의 끝임을 알린다.
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                    //flush() 타이밍??
+                    //dos.flush();
+                    dos.close();//스트림 닫아주기
+                    mFileInputStream.close();//스트림 닫아주기.
+                    // get response
+                    int ch;
+                    //입력 스트림 객체를 얻어온다.
+                    InputStream is = conn.getInputStream();
+                    StringBuffer b =new StringBuffer();
+                    while( ( ch = is.read() ) != -1 ){
+                        b.append( (char)ch );
+                    }
+                    String s=b.toString();
+                    Log.e("Test", "result = " + s);
+                    deleteVideo();
+                }
+                catch(Exception e)
+                {
+                    Log.e("shkang", "exception : " + e.getCause() + " str : " + e.toString());
+                }
+
+            }
+        });
+
+        thread.start();
     }
 
     private void deleteVideo( ) {
@@ -253,9 +334,8 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
         }
         else
             getContentResolver().delete( videoUri,
-                MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
+                    MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
     }
-
 
     protected void onPause()
     {
@@ -277,13 +357,14 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
             player = null;
         }
 
-
+        /*
         if(filename != "")
         {
             deleteVideo();
             filename = "";
 
         }
+        */
 
         super.onPause();
     }
