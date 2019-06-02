@@ -86,6 +86,8 @@ public class Voice extends AppCompatActivity {
 
                 String text = textView.getText().toString();
 
+                Toast.makeText(getApplicationContext(), "잠시만 기다려주십시오, 처리중입니다...", Toast.LENGTH_LONG).show();
+
                 //음성인식 버튼 수행 후 실시
                 if (text.equals("이곳에 텍스트가 나옵니다.")) {
                     Toast.makeText(getBaseContext(), "음성인식을 먼저 실행해주세요", Toast.LENGTH_SHORT).show();

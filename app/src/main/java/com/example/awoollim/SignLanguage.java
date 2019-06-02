@@ -77,6 +77,20 @@ public class SignLanguage extends AppCompatActivity implements SurfaceHolder.Cal
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                File file = new File(filename);
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                if (videoUri == null)
+                {
+                    Toast.makeText(getApplicationContext(), "첫 촬영 시작", Toast.LENGTH_LONG).show();
+                }
+                else
+                    getContentResolver().delete( videoUri,
+                            MediaStore.MediaColumns.DATA + "=?", new String[]{ filename } );
+
                 try {
                     if (recorder == null)
                     {
