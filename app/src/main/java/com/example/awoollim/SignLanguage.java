@@ -255,7 +255,7 @@ public class SignLanguage extends AppCompatActivity  implements SurfaceHolder.Ca
                 {
                     String filePath = "/storage/emulated/0/DCIM/Camera/video_recorded.mp4";
                     FileInputStream mFileInputStream = new FileInputStream(filePath);
-                    URL connectUrl = new URL("http://192.168.219.169:3000/api/photo");
+                    URL connectUrl = new URL("http://malgeul.ga/api/photo");
                     String lineEnd = "\r\n";
                     String twoHyphens = "--";
                     String boundary = "*****";
@@ -441,6 +441,8 @@ public class SignLanguage extends AppCompatActivity  implements SurfaceHolder.Ca
                     recordText.setText("유치원");
                 }else if(sb.toString().indexOf("policeman") != -1){
                     recordText.setText("경찰관");
+                }else{
+                    recordText.setText("인지 불가");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
