@@ -108,7 +108,7 @@ public class SignLanguage extends AppCompatActivity  implements SurfaceHolder.Ca
                     recorder.setVideoSize(640,480);
                     recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                     recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-                    recorder.setOrientationHint(90);
+                    recorder.setOrientationHint(0);
 
                     filename = createFilename();
                     recorder.setOutputFile(filename);
